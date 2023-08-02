@@ -5,19 +5,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons";
-import { NewLoginDialog } from "@/components/new-login";
+import { Modal } from "@/components/modal";
 
 import { postLogin, getLogin } from "@/lib/auth";
 
 export default function Home() {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-  const [newLoginDialogOpen, setNewLoginDialogOpen] = React.useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = React.useState<string | null>("null");
+  const [newLoginDialogOpen, setNewLoginDialogOpen] = React.useState<boolean>(true);
+  // const [token, setToken] = React.useState<string | null>("aaaa");
 
   async function onSubmit(event: React.SyntheticEvent) {
     setErrorMessage(null);
     setIsLoading(true);
-
     event.preventDefault();
 
     //modifier le postLogin en GetLogin (prendre sur fixe)
@@ -28,6 +28,7 @@ export default function Home() {
       setErrorMessage(res.response);
     }
     if (res.status === "success") {
+      // setToken(res.response.token);
       setNewLoginDialogOpen(true);
     }
 
@@ -36,7 +37,7 @@ export default function Home() {
 
   return (
     <>
-      <NewLoginDialog />
+      {newLoginDialogOpen && <Modal isOpen={newLoginDialogOpen} onOpenChange={setNewLoginDialogOpen} />}
       <div className="container relative h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
           <div className="absolute inset-0 bg-primary" />
@@ -52,12 +53,19 @@ export default function Home() {
                   Enter your past login or the code on the invitation flyer
                 </Label>
               </div>
-              <Input type="text" name="login" id="login" placeholder="login or password" disabled={isLoading} className="uppercase" />
+              <Input
+                type="text"
+                name="login"
+                id="login"
+                placeholder="login or password"
+                disabled={isLoading}
+                className="uppercase placeholder:lowercase"
+              />
               <Button type="submit" disabled={isLoading}>
                 {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
                 Login
               </Button>
-              {errorMessage && <Label className="text-red-600">{errorMessage}</Label>}
+              {errorMessage && <Label className="text-destructive font-medium">{errorMessage}</Label>}
             </form>
           </div>
         </div>
