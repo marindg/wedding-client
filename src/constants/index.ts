@@ -1,4 +1,4 @@
-import { sidebarItem } from "@/typings";
+import { sidebarItem } from "@/typings/types";
 
 export const sidebarData: sidebarItem[] = [
   { id: 1, name: "home", link: "/wedding", adminOnly: false },

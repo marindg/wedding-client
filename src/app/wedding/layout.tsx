@@ -1,19 +1,15 @@
 import Sidebar from "@/components/sidebar";
+import getTodos from "@/lib/getTodos";
+import { User } from "@/typings/types";
 
-async function getData() {
-  const res = await fetch("https://jsonplaceholder.typicode.com/todos");
-  const data = await res.json();
-  return data;
-}
+export default async function WeddingLayout({ children }: { children: React.ReactNode }) {
+  const usersData: Promise<User[]> = getTodos();
 
-export default async function WeddingLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const data = await getData();
+  const users = await usersData;
 
-  console.log(data);
+  console.log("usersData:", usersData);
+  console.log("users:", users);
+
   return (
     <div className="flex h-screen w-screen overflow-hidden">
       <Sidebar />
