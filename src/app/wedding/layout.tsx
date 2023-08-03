@@ -1,14 +1,17 @@
 import Sidebar from "@/components/sidebar";
-import getTodos from "@/lib/getTodos";
+
 import { User } from "@/typings/types";
+import { useEffect } from "react";
 
-export default async function WeddingLayout({ children }: { children: React.ReactNode }) {
-  const usersData: Promise<User[]> = getTodos();
-
-  const users = await usersData;
-
-  console.log("usersData:", usersData);
-  console.log("users:", users);
+export default async function WeddingLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  useEffect(() => {
+    document.cookie = "admin=true; SameSite=None; Secure";
+    console.log(document.cookie);
+  }, []);
 
   return (
     <div className="flex h-screen w-screen overflow-hidden">

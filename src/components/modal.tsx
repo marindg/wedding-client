@@ -1,4 +1,6 @@
 import React from "react";
+import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,6 +26,8 @@ type modalProps = {
 export function Modal({ isOpen, onOpenChange, token }: modalProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+
+  const router = useRouter();
 
   async function onSubmit(event: React.SyntheticEvent) {
     setErrorMessage(null);
@@ -59,8 +63,8 @@ export function Modal({ isOpen, onOpenChange, token }: modalProps) {
       setErrorMessage(res.response);
     }
     if (res.status === "success") {
-      await sleep(2000);
-      console.log("success create new login");
+      await sleep(1500);
+      router.push("/wedding");
     }
 
     setIsLoading(false);

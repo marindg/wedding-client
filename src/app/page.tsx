@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +18,8 @@ export default function Home() {
   const [newLoginDialogOpen, setNewLoginDialogOpen] =
     React.useState<boolean>(false);
   const [token, setToken] = React.useState<string | null>(null);
+
+  const router = useRouter();
 
   async function onSubmit(event: React.SyntheticEvent) {
     setErrorMessage(null);
@@ -43,8 +46,8 @@ export default function Home() {
     }
     if (res.status === "success") {
       setToken(res.response);
-      await sleep(2000);
-      console.log("success login");
+      await sleep(1000);
+      router.push("/wedding");
     }
 
     setIsLoading(false);
