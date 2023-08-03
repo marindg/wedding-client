@@ -1,17 +1,16 @@
+"use client";
+
 import Sidebar from "@/components/sidebar";
+import { AppContext } from "@/context/appContext";
+import { redirect } from "next/navigation";
+import { useContext } from "react";
 
-import { User } from "@/typings/types";
-import { useEffect } from "react";
+export default async function WeddingLayout({ children }: { children: React.ReactNode }) {
+  const { user } = useContext(AppContext);
 
-export default async function WeddingLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  useEffect(() => {
-    document.cookie = "admin=true; SameSite=None; Secure";
-    console.log(document.cookie);
-  }, []);
+  if (!user) {
+    redirect("/");
+  }
 
   return (
     <div className="flex h-screen w-screen overflow-hidden">

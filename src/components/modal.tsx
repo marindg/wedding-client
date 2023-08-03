@@ -1,21 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons";
 import { postLogin } from "@/lib/auth";
 import { sleep } from "@/lib/utils";
+import { AppContext } from "@/context/appContext";
 
 type modalProps = {
   isOpen: boolean;
@@ -26,6 +19,7 @@ type modalProps = {
 export function Modal({ isOpen, onOpenChange, token }: modalProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const { setUser } = useContext(AppContext);
 
   const router = useRouter();
 
@@ -64,6 +58,12 @@ export function Modal({ isOpen, onOpenChange, token }: modalProps) {
     }
     if (res.status === "success") {
       await sleep(1500);
+      if (setUser) {
+        setUser(res.response);
+      } else {
+        console.warn("setUser function is not available");
+      }
+
       router.push("/wedding");
     }
 
@@ -75,36 +75,20 @@ export function Modal({ isOpen, onOpenChange, token }: modalProps) {
       <DialogContent className="max-w-[19em] sm:max-w-[25em]">
         <DialogHeader>
           <DialogTitle>Create Login</DialogTitle>
-          <DialogDescription>
-            Create a new login who you will use on your next connexion.
-          </DialogDescription>
+          <DialogDescription>Create a new login who you will use on your next connexion.</DialogDescription>
         </DialogHeader>
         <form onSubmit={onSubmit} className="grid gap-4 py-4">
           <div className="grid grid-cols-1 items-center">
-            <Input
-              id="login"
-              className="col-span-3 uppercase placeholder:lowercase"
-              placeholder="new login"
-            />
-            {errorMessage && (
-              <Label className="text-destructive font-medium py-1  pl-[2px]">
-                {errorMessage}
-              </Label>
-            )}
+            <Input id="login" className="col-span-3 uppercase placeholder:lowercase" placeholder="new login" />
+            {errorMessage && <Label className="text-destructive font-medium py-1  pl-[2px]">{errorMessage}</Label>}
           </div>
           <div className="grid grid-cols-1 items-center">
-            <Input
-              id="login_confirm"
-              className="col-span-3 uppercase placeholder:lowercase"
-              placeholder="confirm login"
-            />
+            <Input id="login_confirm" className="col-span-3 uppercase placeholder:lowercase" placeholder="confirm login" />
           </div>
 
           <DialogFooter>
             <Button type="submit" disabled={isLoading}>
-              {isLoading && (
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-              )}
+              {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
               Create login
             </Button>
           </DialogFooter>
