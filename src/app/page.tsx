@@ -9,9 +9,11 @@ import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons";
 import { Modal } from "@/components/modal";
 
-import { getLogin } from "@/lib/auth";
+import { signInByLogin } from "@/lib/auth";
 import { sleep } from "@/lib/utils";
 import { AppContext } from "@/context/appContext";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { User } from "@/typings/types";
 
 export default function Home() {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -19,6 +21,7 @@ export default function Home() {
   const [newLoginDialogOpen, setNewLoginDialogOpen] = React.useState<boolean>(false);
   const [token, setToken] = React.useState<string | null>(null);
   const { setUser } = useContext(AppContext);
+  const [value, setValue] = useLocalStorage("user", "");
 
   const router = useRouter();
 
@@ -36,7 +39,7 @@ export default function Home() {
       return null;
     }
 
-    const res = await getLogin(login!);
+    const res = await signInByLogin(login!);
 
     if (res.status === "error") {
       setErrorMessage(res.response);
@@ -46,14 +49,16 @@ export default function Home() {
       setNewLoginDialogOpen(true);
     }
     if (res.status === "success") {
-      const userData: string = res.response;
+      const userData: User = res.response;
 
-      setToken(res.response);
+      setToken(userData.token);
       if (setUser) {
         setUser(res.response);
       } else {
         console.warn("setUser function is not available");
       }
+
+      setValue(userData.token, null);
       await sleep(1000);
       router.push("/wedding");
     }

@@ -6,9 +6,11 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons";
-import { postLogin } from "@/lib/auth";
+import { createLogin } from "@/lib/auth";
 import { sleep } from "@/lib/utils";
 import { AppContext } from "@/context/appContext";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { User } from "@/typings/types";
 
 type modalProps = {
   isOpen: boolean;
@@ -19,6 +21,8 @@ type modalProps = {
 export function Modal({ isOpen, onOpenChange, token }: modalProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [value, setValue] = useLocalStorage("user", "");
+
   const { setUser } = useContext(AppContext);
 
   const router = useRouter();
@@ -51,18 +55,22 @@ export function Modal({ isOpen, onOpenChange, token }: modalProps) {
       return null;
     }
 
-    const res = await postLogin(newLogin, token);
+    const res = await createLogin(newLogin, token);
 
     if (res.status !== "success") {
       setErrorMessage(res.response);
     }
     if (res.status === "success") {
+      const userData: User = res.response;
+
       await sleep(1500);
       if (setUser) {
-        setUser(res.response);
+        setUser(userData);
       } else {
         console.warn("setUser function is not available");
       }
+
+      setValue("token", userData);
 
       router.push("/wedding");
     }

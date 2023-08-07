@@ -7,5 +7,6 @@ export type sidebarItem = {
 
 export type User = {
   login: string;
+  token: string;
   isAdmin: boolean;
 };

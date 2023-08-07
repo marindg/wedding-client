@@ -14,7 +14,7 @@ export default async function WeddingLayout({ children }: { children: React.Reac
 
   return (
     <div className="flex h-screen w-screen overflow-hidden">
-      <Sidebar />
+      <Sidebar isAdmin={user.isAdmin} />
       <main className="bg-red-200 w-full p-5">{children}</main>
     </div>
   );
